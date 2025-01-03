@@ -5,6 +5,7 @@ import { generateVerificationCode } from "../Utils/generateVerificationCode.js";
 import { generateTokenAndSetCookie } from "../Utils/generateTokenAndSetCookie.js";
 import {
   sendResetPasswordEmail,
+  sendResetSuccessEmail,
   sendVerificationEmail,
   sendWelcomeEmail,
 } from "../Mailtrap/email.js";
@@ -172,5 +173,49 @@ export const forgotPassword = async (req, res) => {
   } catch (error) {
     console.error("Error in forgotPassword:", error);
     res.status(500).json({ success: false, message: "An error occurred." });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  try {
+    if (!password) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Password is required" });
+    }
+
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpiresAt: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid Or Expired Reset Token" });
+    }
+
+    const hashedPassword = await bcryptjs.hash(password, 10);
+
+    user.password = hashedPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpiresAt = undefined;
+
+    await user.save();
+
+    await sendResetSuccessEmail(user.email);
+
+    res
+      .status(200)
+      .json({ success: true, message: "Password Reset Successful" });
+  } catch (error) {
+    console.error("Error in resetPassword:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while resetting the password",
+    });
   }
 };
