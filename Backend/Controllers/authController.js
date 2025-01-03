@@ -9,6 +9,7 @@ import {
   sendVerificationEmail,
   sendWelcomeEmail,
 } from "../Mailtrap/email.js";
+import exp from "constants";
 
 export const signup = async (req, res) => {
   const { email, password, name } = req.body;
@@ -217,5 +218,21 @@ export const resetPassword = async (req, res) => {
       success: false,
       message: "An error occurred while resetting the password",
     });
+  }
+};
+
+export const checkAuth = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).select("-password");
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User Not Found" });
+    }
+
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: "Server Error" });
   }
 };
