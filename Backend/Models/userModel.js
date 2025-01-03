@@ -1,29 +1,29 @@
 import { Schema, model } from "mongoose";
 
-const userschema = new Schema(
+const userSchema = new Schema(
   {
     email: {
-      types: String,
+      type: String,
       required: true,
       unique: true,
     },
     password: {
-      types: String,
+      type: String,
       required: true,
     },
     name: {
-      types: String,
+      type: String,
       required: true,
     },
     lastLogin: {
-      types: Date,
+      type: Date,
       default: Date.now,
     },
-    isVerfied: {
-      types: Boolean,
+    isVerified: {
+      type: Boolean,
       default: false,
     },
-    reserPasswordToken: String,
+    resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
     verificationToken: String,
     verificationTokenExpiresAt: Date,
@@ -31,4 +31,4 @@ const userschema = new Schema(
   { timestamps: true }
 );
 
-export const user = model("USER", userschema);
+export const User = model("User", userSchema);

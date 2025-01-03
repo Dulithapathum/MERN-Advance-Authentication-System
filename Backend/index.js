@@ -6,7 +6,7 @@ const app = express();
 dontenv.config();
 
 ConnectDB();
-
+app.use(express.json());
 app.use("/api/auth", router);
 
 app.listen(process.env.PORT, () => {
