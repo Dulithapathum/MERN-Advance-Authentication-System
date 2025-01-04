@@ -1,5 +1,8 @@
 import React from "react";
+import { Routes, Route } from "react-router-dom";
 import FloatingShape from "./components/FloatingShape";
+import SignUp from "./Pages/SignUp";
+import LogIn from "./Pages/LogIn";
 const App = () => {
   return (
     <div
@@ -27,6 +30,11 @@ const App = () => {
         left="-10%"
         delay={2}
       />
+
+      <Routes>
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<LogIn />} />
+      </Routes>
     </div>
   );
 };
